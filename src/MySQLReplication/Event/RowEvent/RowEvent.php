@@ -416,7 +416,7 @@ class RowEvent extends EventCommon
 
     protected function findTableMap(): ?TableMap
     {
-        $tableId = $this->binaryDataReader->readTableId();
+        $tableId = (string)$this->binaryDataReader->readTableId();
         $this->binaryDataReader->advance(2);
 
         if (in_array(
@@ -707,7 +707,11 @@ class RowEvent extends EventCommon
             $year . '-' . $month . '-' . $day . ' ' . $hour . ':' . $minute . ':' . $second
         );
         if ($formattedDate) {
-            return $formattedDate . $fsp;
+            if ($fsp > 0) {
+                return vsprintf('%s.%06u', [$formattedDate, $fsp]);
+            } else {
+                return $formattedDate;
+            }
         }
 
         return null;
